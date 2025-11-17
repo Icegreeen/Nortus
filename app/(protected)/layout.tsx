@@ -1,6 +1,7 @@
 "use client";
 
 import { TicketsProvider } from "@/contexts/TicketsContext";
+import { HeaderActionsProvider } from "@/contexts/HeaderActionsContext";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,15 +35,17 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <TicketsProvider>
-      <div className="min-h-screen bg-[#0B1125] flex">
-        <Sidebar />
-        <div className="flex-1 ml-20 transition-all duration-300 flex flex-col relative z-10">
-          <Header />
-          <main className="flex-1 overflow-auto relative z-10">
-            {children}
-          </main>
+      <HeaderActionsProvider>
+        <div className="min-h-screen bg-[#0B1125] flex">
+          <Sidebar />
+          <div className="flex-1 ml-20 transition-all duration-300 flex flex-col relative z-10">
+            <Header />
+            <main className="flex-1 overflow-auto relative z-10">
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
+      </HeaderActionsProvider>
     </TicketsProvider>
   );
 }

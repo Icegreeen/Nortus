@@ -51,6 +51,32 @@ export const ticketsAPI = {
       responsible: ticket.responsible,
     };
   },
+
+  update: async (id: string, ticket: Partial<{
+    clientName: string;
+    email: string;
+    priority: "Urgente" | "Média" | "Baixa";
+    responsible: string;
+    subject: string;
+    status: "Aberto" | "Em andamento" | "Resolvido" | "Fechado";
+  }>): Promise<Ticket> => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return {
+      id,
+      priority: ticket.priority || "Média",
+      client: ticket.clientName || "",
+      email: ticket.email || "",
+      subject: ticket.subject || "",
+      status: ticket.status || "Aberto",
+      createdAt: new Date().toLocaleDateString("pt-BR"),
+      responsible: ticket.responsible || "",
+    };
+  },
+
+  getById: async (id: string): Promise<Ticket | null> => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return null;
+  },
 };
 
 

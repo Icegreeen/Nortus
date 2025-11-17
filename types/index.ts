@@ -62,5 +62,28 @@ export interface AISuggestion {
   title: string;
   description: string;
   confidence: number;
+  reason?: string;
+}
+
+export interface Client360Product {
+  name: string;
+  value: number;
+  status: "Ativo" | "Inativo";
+}
+
+export interface Client360 {
+  client: {
+    name: string;
+    clientType: string;
+    email?: string;
+    phone?: string;
+    joinDate?: string;
+  };
+  produtos: Client360Product[];
+  lifetimeValue?: number;
+  expansionScore?: number;
+  retentionScore?: number;
+  chatHistory?: ChatMessage[];
+  aiSuggestions?: AISuggestion[];
 }
 

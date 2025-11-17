@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTickets } from "@/contexts/TicketsContext";
 import { Ticket } from "@/types";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ticketSchema, type TicketFormData } from "@/schemas/ticket.schema";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useHeaderActions } from "@/contexts/HeaderActionsContext";
 
 const priorityColors: Record<string, string> = {
   Urgente: "bg-red-500/20 text-red-400 border-red-500/30",
@@ -23,10 +24,29 @@ const statusColors: Record<string, string> = {
 };
 
 export default function TicketsPage() {
-  const { filteredTickets, loading, createTicket, resumo, searchQuery, setSearchQuery, filters, setFilters } = useTickets();
+  const { filteredTickets, loading, createTicket, updateTicket, getTicketById, resumo, searchQuery, setSearchQuery, filters, setFilters } = useTickets();
+  const { setActions } = useHeaderActions();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ticketsPerPage = 10;
+
+  useEffect(() => {
+    setActions(
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        Novo Ticket
+      </button>
+    );
+    return () => setActions(null);
+  }, [setActions]);
 
   const {
     register,
@@ -34,6 +54,16 @@ export default function TicketsPage() {
     formState: { errors },
     reset,
   } = useForm<TicketFormData>({
+    resolver: zodResolver(ticketSchema),
+  });
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleSubmitEdit,
+    formState: { errors: errorsEdit },
+    reset: resetEdit,
+    setValue: setValueEdit,
+  } = useForm<TicketFormData & { status?: string }>({
     resolver: zodResolver(ticketSchema),
   });
 
@@ -54,11 +84,38 @@ export default function TicketsPage() {
   };
 
   const handleView = (ticket: Ticket) => {
-    toast.info("Visualização de ticket em desenvolvimento");
+    setSelectedTicket(ticket);
+    setIsViewModalOpen(true);
   };
 
   const handleEdit = (ticket: Ticket) => {
-    toast.info("Edição de ticket em desenvolvimento");
+    setSelectedTicket(ticket);
+    setValueEdit("clientName", ticket.client);
+    setValueEdit("email", ticket.email);
+    setValueEdit("priority", ticket.priority);
+    setValueEdit("responsible", ticket.responsible);
+    setValueEdit("subject", ticket.subject);
+    setValueEdit("status", ticket.status);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (data: TicketFormData & { status?: string }) => {
+    if (!selectedTicket) return;
+    try {
+      await updateTicket(selectedTicket.id, {
+        clientName: data.clientName,
+        email: data.email,
+        priority: data.priority,
+        responsible: data.responsible,
+        subject: data.subject,
+        status: data.status as any,
+      });
+      setIsEditModalOpen(false);
+      setSelectedTicket(null);
+      resetEdit();
+    } catch (error) {
+      toast.error("Erro ao atualizar ticket");
+    }
   };
 
   const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
@@ -81,17 +138,6 @@ export default function TicketsPage() {
   return (
     <>
       <div className="min-h-screen  p-6">
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Novo Ticket
-          </button>
-        </div>
         <div className="space-y-6">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -164,11 +210,17 @@ export default function TicketsPage() {
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
               <select
                 value={filters.status || ""}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer h-[42px] appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 1rem center',
+                  paddingRight: '2.5rem',
+                }}
               >
                 <option value="">Todos os status</option>
                 <option value="Aberto">Aberto</option>
@@ -180,7 +232,13 @@ export default function TicketsPage() {
               <select
                 value={filters.priority || ""}
                 onChange={(e) => setFilters({ ...filters, priority: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer h-[42px] appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 1rem center',
+                  paddingRight: '2.5rem',
+                }}
               >
                 <option value="">Todas as prioridades</option>
                 <option value="Urgente">Urgente</option>
@@ -191,7 +249,13 @@ export default function TicketsPage() {
               <select
                 value={filters.responsible || ""}
                 onChange={(e) => setFilters({ ...filters, responsible: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-8 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer h-[42px] appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 1rem center',
+                  paddingRight: '2.5rem',
+                }}
               >
                 <option value="">Todos os responsáveis</option>
                 {responsaveis.map((resp) => (
@@ -438,6 +502,250 @@ export default function TicketsPage() {
                       className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors"
                     >
                       Salvar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isViewModalOpen && selectedTicket && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4" onClick={() => setIsViewModalOpen(false)}>
+            <div
+              className="bg-[#0B1125] rounded-2xl border border-gray-800/50 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-800/50">
+                <h2 className="text-xl font-semibold text-white">Detalhes do Ticket</h2>
+                <button
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="w-8 h-8 rounded-full bg-gray-700/80 hover:bg-gray-600/80 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">ID do Ticket</label>
+                    <p className="text-white font-semibold">{selectedTicket.id}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusColors[selectedTicket.status] || statusColors.Aberto}`}>
+                      {selectedTicket.status}
+                    </span>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Prioridade</label>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${priorityColors[selectedTicket.priority] || priorityColors.Baixa}`}>
+                      {selectedTicket.priority}
+                    </span>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Criado em</label>
+                    <p className="text-white">{selectedTicket.createdAt}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Cliente</label>
+                  <p className="text-white font-semibold">{selectedTicket.client}</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                  <p className="text-white">{selectedTicket.email}</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Responsável</label>
+                  <p className="text-white">{selectedTicket.responsible}</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Assunto</label>
+                  <p className="text-white">{selectedTicket.subject}</p>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    onClick={() => {
+                      setIsViewModalOpen(false);
+                      handleEdit(selectedTicket);
+                    }}
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    Editar Ticket
+                  </button>
+                  <button
+                    onClick={() => setIsViewModalOpen(false)}
+                    className="px-6 py-2.5 border border-gray-600/50 hover:bg-gray-600/80 text-white rounded-lg transition-colors"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isEditModalOpen && selectedTicket && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4" onClick={() => setIsEditModalOpen(false)}>
+            <div
+              className="bg-[#0B1125] rounded-2xl border border-gray-800/50 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-800/50">
+                <h2 className="text-xl font-semibold text-white">Editar Ticket</h2>
+                <button
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    setSelectedTicket(null);
+                    resetEdit();
+                  }}
+                  className="w-8 h-8 rounded-full bg-gray-700/80 hover:bg-gray-600/80 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-400 text-sm mb-6">
+                  Atualize os dados do ticket abaixo.
+                </p>
+
+                <form onSubmit={handleSubmitEdit(handleUpdate)} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nome do cliente *
+                    </label>
+                    <input
+                      type="text"
+                      {...registerEdit("clientName")}
+                      placeholder="Nome da pessoa ou empresa que está solicitando o suporte"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                    />
+                    {errorsEdit.clientName && (
+                      <p className="mt-1 text-sm text-red-400">{errorsEdit.clientName.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      {...registerEdit("email")}
+                      placeholder="E-mail de contato para atualizações e resposta"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                    />
+                    {errorsEdit.email && (
+                      <p className="mt-1 text-sm text-red-400">{errorsEdit.email.message}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Prioridade *
+                      </label>
+                      <select
+                        {...registerEdit("priority")}
+                        className="w-full px-4 py-2.5 bg-[#0B1125] border border-gray-600/50 rounded-[30px] text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 1rem center',
+                          paddingRight: '2.5rem',
+                        }}
+                      >
+                        <option value="" className="bg-[#0B1125] text-white">Selecione a prioridade</option>
+                        <option value="Urgente" className="bg-[#0B1125] text-white">Urgente</option>
+                        <option value="Média" className="bg-[#0B1125] text-white">Média</option>
+                        <option value="Baixa" className="bg-[#0B1125] text-white">Baixa</option>
+                      </select>
+                      {errorsEdit.priority && (
+                        <p className="mt-1 text-sm text-red-400">{errorsEdit.priority.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Status *
+                      </label>
+                      <select
+                        {...registerEdit("status")}
+                        className="w-full px-4 py-2.5 bg-[#0B1125] border border-gray-600/50 rounded-[30px] text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 1rem center',
+                          paddingRight: '2.5rem',
+                        }}
+                      >
+                        <option value="Aberto" className="bg-[#0B1125] text-white">Aberto</option>
+                        <option value="Em andamento" className="bg-[#0B1125] text-white">Em andamento</option>
+                        <option value="Resolvido" className="bg-[#0B1125] text-white">Resolvido</option>
+                        <option value="Fechado" className="bg-[#0B1125] text-white">Fechado</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Responsável *
+                    </label>
+                    <input
+                      type="text"
+                      {...registerEdit("responsible")}
+                      placeholder="Quem será o responsável por esse ticket"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                    />
+                    {errorsEdit.responsible && (
+                      <p className="mt-1 text-sm text-red-400">{errorsEdit.responsible.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Assunto *
+                    </label>
+                    <textarea
+                      {...registerEdit("subject")}
+                      rows={4}
+                      placeholder="Resumo breve do problema ou solicitação"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 resize-none"
+                    />
+                    {errorsEdit.subject && (
+                      <p className="mt-1 text-sm text-red-400">{errorsEdit.subject.message}</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-center gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedTicket(null);
+                        resetEdit();
+                      }}
+                      className="px-6 py-2.5 border border-gray-600/50 hover:bg-gray-600/80 text-white rounded-lg transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      Salvar Alterações
                     </button>
                   </div>
                 </form>
