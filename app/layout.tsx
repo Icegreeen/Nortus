@@ -18,7 +18,17 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           {children}
-          <Toaster position="top-right" richColors />
+          <Toaster 
+            position="bottom-center" 
+            toastOptions={{
+              classNames: {
+                toast: "toast-custom",
+                success: "toast-success",
+                error: "toast-error",
+                info: "toast-info",
+              },
+            }}
+          />
         </AuthProvider>
       </body>
     </html>

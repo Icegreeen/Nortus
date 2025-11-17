@@ -70,7 +70,9 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
           open: resumo.open + 1,
         });
       }
-      toast.success("Ticket criado com sucesso!");
+      toast.success("Ticket criado com sucesso!", {
+        description: "O ticket foi criado e já está na sua lista.",
+      });
     } catch (error) {
       toast.error("Erro ao criar ticket");
       throw error;
