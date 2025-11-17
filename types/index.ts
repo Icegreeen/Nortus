@@ -18,14 +18,27 @@ export interface LoginCredentials {
 
 export interface Ticket {
   id: string;
-  title: string;
-  description: string;
-  status: "open" | "in_progress" | "resolved" | "closed";
-  priority: "urgent" | "medium" | "low";
-  assignedTo?: string;
-  createdBy: string;
+  priority: "Urgente" | "Média" | "Baixa";
+  client: string;
+  email: string;
+  subject: string;
+  status: "Aberto" | "Em andamento" | "Resolvido" | "Fechado";
   createdAt: string;
-  updatedAt: string;
+  responsible: string;
+}
+
+export interface TicketResumo {
+  open: number;
+  inProgress: number;
+  solved: number;
+  timeAverageHours: number;
+}
+
+export interface TicketManagementResponse {
+  resumo: TicketResumo;
+  status: string[];
+  priorities: string[];
+  tickets: Ticket[];
 }
 
 export interface KPI {

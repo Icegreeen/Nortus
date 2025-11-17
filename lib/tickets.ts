@@ -1,56 +1,54 @@
-import { Ticket } from "@/types";
+import axios from "axios";
+import { API_BASE_URL } from "./config";
+import { Ticket, TicketManagementResponse } from "@/types";
 
 export const ticketsAPI = {
-  getAll: async (): Promise<Ticket[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return [
-      {
-        id: "1",
-        title: "Problema no sistema de pagamento",
-        description: "Cliente não consegue realizar pagamento",
-        status: "open",
-        priority: "urgent",
-        assignedTo: "user1",
-        createdBy: "user2",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: "2",
-        title: "Dúvida sobre plano Premium",
-        description: "Cliente quer entender benefícios do plano Premium",
-        status: "in_progress",
-        priority: "medium",
-        assignedTo: "user1",
-        createdBy: "user3",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
+  getTicketManagement: async (): Promise<TicketManagementResponse> => {
+    try {
+      const url = `${API_BASE_URL}/ticket-management.json`;
+      const response = await axios.get(url, {
+        withCredentials: false,
+      });
+
+      return response.data as TicketManagementResponse;
+    } catch (error: any) {
+      console.error("Erro ao buscar dados de tickets:", error);
+      return {
+        resumo: {
+          open: 0,
+          inProgress: 0,
+          solved: 0,
+          timeAverageHours: 0,
+        },
+        status: [],
+        priorities: [],
+        tickets: [],
+      };
+    }
   },
 
-  create: async (ticket: Omit<Ticket, "id" | "createdAt" | "updatedAt">): Promise<Ticket> => {
+  create: async (ticket: {
+    clientName: string;
+    email: string;
+    priority: "Urgente" | "Média" | "Baixa";
+    responsible: string;
+    subject: string;
+  }): Promise<Ticket> => {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    return {
-      ...ticket,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  },
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
 
-  update: async (id: string, ticket: Partial<Ticket>): Promise<Ticket> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     return {
-      id,
-      title: ticket.title || "",
-      description: ticket.description || "",
-      status: ticket.status || "open",
-      priority: ticket.priority || "low",
-      assignedTo: ticket.assignedTo,
-      createdBy: ticket.createdBy || "",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      id: `TK${String(Date.now()).slice(-3)}`,
+      priority: ticket.priority,
+      client: ticket.clientName,
+      email: ticket.email,
+      subject: ticket.subject,
+      status: "Aberto",
+      createdAt: `${day}/${month}/${year}`,
+      responsible: ticket.responsible,
     };
   },
 };

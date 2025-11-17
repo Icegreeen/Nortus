@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { ReactNode } from "react";
 
 const routeTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -10,7 +11,11 @@ const routeTitles: Record<string, string> = {
   "/dashboard/calendar": "Agenda",
 };
 
-export default function Header() {
+interface HeaderProps {
+  actions?: ReactNode;
+}
+
+export default function Header({ actions }: HeaderProps) {
   const pathname = usePathname();
   
   const getTitle = () => {
@@ -29,8 +34,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#1a1d2e] border-b border-gray-800/50 shadow-sm">
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-white">{title}</h1>
+        {actions && <div>{actions}</div>}
       </div>
     </header>
   );
