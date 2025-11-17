@@ -1,6 +1,12 @@
-# Nortus - Dashboard de Seguros
+<h1 align="center">
+    <a">Nortus - Dashboard de Seguros</a>
+</h1>
 
-Dashboard para gestão de seguros com chat assistido por IA, análise de KPIs e simulação de planos.
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/5fc85106-6a85-4caf-bfa7-06a5456fa833" />
+
+<h3 align="center">
+    <a">Dashboard para gestão de seguros com chat assistido por IA, análise de KPIs e simulação de planos.</a>
+</h3>
 
 ## Como rodar
 
