@@ -19,7 +19,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f1117]">
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1125]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-300">Carregando...</p>
@@ -34,10 +34,9 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <TicketsProvider>
-      <div className="min-h-screen bg-[#0f1117] flex">
+      <div className="min-h-screen bg-[#0B1125] flex">
         <Sidebar />
         <div className="flex-1 ml-20 transition-all duration-300 flex flex-col relative z-10">
-          <Header />
           <main className="flex-1 overflow-auto relative z-10">
             {children}
           </main>

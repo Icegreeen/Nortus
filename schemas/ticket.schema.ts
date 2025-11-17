@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 export const ticketSchema = z.object({
-  title: z.string().min(1, "Título é obrigatório"),
-  description: z.string().min(1, "Descrição é obrigatória"),
-  status: z.enum(["open", "in_progress", "resolved", "closed"]),
-  priority: z.enum(["urgent", "medium", "low"]),
-  assignedTo: z.string().optional(),
+  clientName: z.string().min(1, "Nome do cliente é obrigatório"),
+  email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
+  priority: z.enum(["Urgente", "Média", "Baixa"], {
+    required_error: "Prioridade é obrigatória",
+  }),
+  responsible: z.string().min(1, "Responsável é obrigatório"),
+  subject: z.string().min(1, "Assunto é obrigatório"),
 });
 
 export type TicketFormData = z.infer<typeof ticketSchema>;

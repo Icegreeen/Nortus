@@ -365,20 +365,21 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1117] p-6">
+    <div className="min-h-screen  p-6">
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-[#1a1d2e] rounded-2xl p-6 border border-gray-800/50 shadow-xl shadow-black/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-white">Evolução dos KPIs</h2>
-              <div className="flex gap-2">
+
+              <div className="flex gap-2 bg-[#202435] p-2 rounded-[30px]">
                 {(["Retenção", "Conversão", "Churn", "ARPU"] as KpiFilter[]).map((kpi) => (
                   <button
                     key={kpi}
                     onClick={() => setSelectedKpi(kpi)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                    className={`px-3.5 py-2.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                       selectedKpi === kpi
-                        ? "bg-blue-600 text-white shadow-md shadow-blue-600/40"
+                        ? "bg-[#43D2CB] text-white shadow-md shadow-blue-600/40"
                         : "bg-gray-700/80 text-gray-300 hover:bg-gray-600/80 hover:text-white"
                     }`}
                   >
@@ -440,14 +441,19 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-[#1a1d2e] rounded-2xl p-6 border border-gray-800/50 shadow-xl shadow-black/20">
+        <div className="bg-gradient-to-b from-[#1a1d2e]/75 to-[#0f0f0f]/20 border border-stroke-1 backdrop-blur-main rounded-out rounded-2xl p-6 border-gray-800/50 shadow-xl shadow-black/20">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-white">Mapa de clientes por região</h2>
             <div className="flex gap-3">
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="bg-gray-700/80 border border-gray-600/50 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-pointer"
+                className="bg-[#0B1125] rounded-[30px] pl-8 pr-10 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-pointer appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                }}
               >
                 <option value="Todos os locais">Todos os locais</option>
                 <option value="São Paulo">São Paulo</option>
@@ -457,7 +463,12 @@ export default function DashboardPage() {
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="bg-gray-700/80 border border-gray-600/50 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-pointer"
+                className="bg-[#0B1125] rounded-[30px] pl-8 pr-10 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all cursor-pointer appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 0.75rem center",
+                }}
               >
                 <option value="Todos os tipos">Todos os tipos</option>
                 <option value="Residencial">Residencial</option>

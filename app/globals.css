@@ -85,3 +85,12 @@ body {
   pointer-events: auto !important;
   z-index: 1000 !important;
 }
+
+select option {
+  background-color: #0B1125 !important;
+  color: #ffffff !important;
+}
+
+select {
+  color-scheme: dark;
+}
