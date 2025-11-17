@@ -121,14 +121,39 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={rememberUser}
-                onChange={(e) => setRememberUser(e.target.checked)}
-                className="w-5 h-5 rounded-sm border-2 border-white bg-transparent text-blue-500 focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-0 cursor-pointer accent-blue-500"
-              />
-              <span className="text-sm text-white">Lembrar meu usuário</span>
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={rememberUser}
+                  onChange={(e) => setRememberUser(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-5 h-5 rounded-md border-2 transition-all duration-200 flex items-center justify-center ${
+                  rememberUser 
+                    ? 'bg-[#1876D2] border-[#1876D2] shadow-lg shadow-blue-500/30' 
+                    : 'border-[#737677] bg-transparent group-hover:border-cyan-400/50'
+                }`}>
+                  {rememberUser && (
+                    <svg 
+                      className="w-3.5 h-3.5 text-white transition-opacity duration-150" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={3} 
+                        d="M5 13l4 4L19 7" 
+                      />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className="text-sm text-[#E3E3E3] group-hover:text-white transition-colors">
+                Lembrar meu usuário
+              </span>
             </label>
 
             <a

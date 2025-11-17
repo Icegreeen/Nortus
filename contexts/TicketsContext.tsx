@@ -17,6 +17,15 @@ interface TicketsContextType {
     responsible: string;
     subject: string;
   }) => Promise<void>;
+  updateTicket: (id: string, ticket: Partial<{
+    clientName: string;
+    email: string;
+    priority: "Urgente" | "Média" | "Baixa";
+    responsible: string;
+    subject: string;
+    status: "Aberto" | "Em andamento" | "Resolvido" | "Fechado";
+  }>) => Promise<void>;
+  getTicketById: (id: string) => Ticket | undefined;
   filteredTickets: Ticket[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -79,6 +88,48 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateTicket = async (id: string, updates: Partial<{
+    clientName: string;
+    email: string;
+    priority: "Urgente" | "Média" | "Baixa";
+    responsible: string;
+    subject: string;
+    status: "Aberto" | "Em andamento" | "Resolvido" | "Fechado";
+  }>) => {
+    try {
+      const updatedTicket = await ticketsAPI.update(id, updates);
+      setTickets((prev) =>
+        prev.map((ticket) => (ticket.id === id ? { ...ticket, ...updatedTicket } : ticket))
+      );
+      
+      if (updates.status && resumo) {
+        const oldTicket = tickets.find((t) => t.id === id);
+        if (oldTicket) {
+          const newResumo = { ...resumo };
+          
+          if (oldTicket.status === "Aberto") newResumo.open = Math.max(0, newResumo.open - 1);
+          if (oldTicket.status === "Em andamento") newResumo.inProgress = Math.max(0, newResumo.inProgress - 1);
+          if (oldTicket.status === "Resolvido") newResumo.solved = Math.max(0, newResumo.solved - 1);
+          
+          if (updates.status === "Aberto") newResumo.open += 1;
+          if (updates.status === "Em andamento") newResumo.inProgress += 1;
+          if (updates.status === "Resolvido") newResumo.solved += 1;
+          
+          setResumo(newResumo);
+        }
+      }
+      
+      toast.success("Ticket atualizado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao atualizar ticket");
+      throw error;
+    }
+  };
+
+  const getTicketById = (id: string): Ticket | undefined => {
+    return tickets.find((ticket) => ticket.id === id);
+  };
+
   const filteredTickets = tickets.filter((ticket) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -106,6 +157,8 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
         loading,
         fetchTickets,
         createTicket,
+        updateTicket,
+        getTicketById,
         filteredTickets,
         searchQuery,
         setSearchQuery,
