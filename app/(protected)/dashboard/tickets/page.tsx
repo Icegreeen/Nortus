@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ticketSchema, type TicketFormData } from "@/schemas/ticket.schema";
 import { toast } from "sonner";
 import Image from "next/image";
-import Header from "@/components/Header";
 
 const priorityColors: Record<string, string> = {
   Urgente: "bg-red-500/20 text-red-400 border-red-500/30",
@@ -49,7 +48,6 @@ export default function TicketsPage() {
       });
       setIsModalOpen(false);
       reset();
-      toast.success("Ticket criado com sucesso!");
     } catch (error) {
       toast.error("Erro ao criar ticket");
     }
@@ -82,21 +80,19 @@ export default function TicketsPage() {
 
   return (
     <>
-      <Header
-        actions={
+      <div className="min-h-screen  p-6">
+        <div className="flex justify-end mb-6">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-[30px] font-semibold flex items-center gap-2 transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             Novo Ticket
           </button>
-        }
-      />
-      <div className="min-h-screen p-6">
-        <div className="">
+        </div>
+        <div className="space-y-6">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Tickets Abertos */}
@@ -149,7 +145,7 @@ export default function TicketsPage() {
           </div>
         </div>
 
-        <div className="bg-[#1a1d2e] rounded-2xl p-6 mt-8 border border-gray-800/50 shadow-xl shadow-black/20">
+        <div className="bg-[#1a1d2e] rounded-2xl p-6 border border-gray-800/50 shadow-xl shadow-black/20">
           <h2 className="text-xl font-semibold text-white mb-6">Lista de Tickets</h2>
 
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -172,12 +168,7 @@ export default function TicketsPage() {
               <select
                 value={filters.status || ""}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                }}
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
               >
                 <option value="">Todos os status</option>
                 <option value="Aberto">Aberto</option>
@@ -189,12 +180,7 @@ export default function TicketsPage() {
               <select
                 value={filters.priority || ""}
                 onChange={(e) => setFilters({ ...filters, priority: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                }}
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
               >
                 <option value="">Todas as prioridades</option>
                 <option value="Urgente">Urgente</option>
@@ -205,12 +191,7 @@ export default function TicketsPage() {
               <select
                 value={filters.responsible || ""}
                 onChange={(e) => setFilters({ ...filters, responsible: e.target.value || undefined })}
-                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.75rem center",
-                }}
+                className="bg-[#0B1125] border border-gray-600/50 rounded-[30px] px-8 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer"
               >
                 <option value="">Todos os responsáveis</option>
                 {responsaveis.map((resp) => (
@@ -222,7 +203,7 @@ export default function TicketsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto bg-[#202435] p-4 rounded-2xl">
+          <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-800/50">
@@ -331,13 +312,13 @@ export default function TicketsPage() {
         </div>
 
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-[10000] p-4" onClick={() => setIsModalOpen(false)}>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4" onClick={() => setIsModalOpen(false)}>
             <div
               className="bg-[#0B1125] rounded-2xl border border-gray-800/50 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-800/50">
-                <h2 className="text-xl text-white">Novo Ticket</h2>
+                <h2 className="text-xl font-semibold text-white">Novo Ticket</h2>
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
@@ -365,7 +346,7 @@ export default function TicketsPage() {
                       type="text"
                       {...register("clientName")}
                       placeholder="Nome da pessoa ou empresa que está solicitando o suporte"
-                      className="w-full pl-4 pr-10 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                     />
                     {errors.clientName && (
                       <p className="mt-1 text-sm text-red-400">{errors.clientName.message}</p>
@@ -380,7 +361,7 @@ export default function TicketsPage() {
                       type="email"
                       {...register("email")}
                       placeholder="E-mail de contato para atualizações e resposta"
-                      className="w-full pl-4 pr-10 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                     />
                     {errors.email && (
                       <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
@@ -393,7 +374,7 @@ export default function TicketsPage() {
                       </label>
                       <select
                         {...register("priority")}
-                        className="w-full pl-4 pr-10 py-2.5 bg-[#0B1125] border border-gray-600/50 rounded-[30px] text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
+                        className="w-full px-4 py-2.5 bg-[#0B1125] border border-gray-600/50 rounded-[30px] text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 cursor-pointer appearance-none"
                         style={{
                           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                           backgroundRepeat: 'no-repeat',
@@ -419,7 +400,7 @@ export default function TicketsPage() {
                       type="text"
                       {...register("responsible")}
                       placeholder="Quem será o responsável por esse ticket"
-                      className="w-full pl-4 pr-10 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
                     />
                     {errors.responsible && (
                       <p className="mt-1 text-sm text-red-400">{errors.responsible.message}</p>
@@ -434,7 +415,7 @@ export default function TicketsPage() {
                       {...register("subject")}
                       rows={4}
                       placeholder="Resumo breve do problema ou solicitação"
-                      className="w-full pl-4 pr-10 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 resize-none"
+                      className="w-full px-4 py-2.5 bg-[#F6F8FC1A] border border-gray-600/50 rounded-[30px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 resize-none"
                     />
                     {errors.subject && (
                       <p className="mt-1 text-sm text-red-400">{errors.subject.message}</p>
@@ -469,4 +450,3 @@ export default function TicketsPage() {
     </>
   );
 }
-

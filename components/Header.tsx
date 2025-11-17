@@ -8,7 +8,7 @@ const routeTitles: Record<string, string> = {
   "/dashboard/tickets": "Tickets",
   "/dashboard/chat": "Chat",
   "/dashboard/profile": "Perfil",
-  "/dashboard/calendar": "Agenda",
+  "/dashboard/plans": "Simulador de Planos",
 };
 
 interface HeaderProps {

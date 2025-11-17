@@ -13,7 +13,7 @@ const navigation = [
   { name: "Tickets", href: "/dashboard/tickets", icon: "/assets/icons/ticket.png" },
   { name: "Chat", href: "/dashboard/chat", icon: "/assets/icons/chat.png" },
   { name: "Perfil", href: "/dashboard/profile", icon: "/assets/icons/user.png" },
-  { name: "Agenda", href: "/dashboard/calendar", icon: "/assets/icons/calendar.png" },
+  { name: "Plan", href: "/dashboard/plans", icon: "/assets/icons/calendar.png" },
 ];
 
 export default function Sidebar() {
@@ -157,7 +157,10 @@ export default function Sidebar() {
 
       <nav className="flex-1 space-y-5 flex flex-col items-center justify-center w-full">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || (item.href === "/dashboard" && pathname === "/dashboard");
+          const isActive =
+            pathname === item.href ||
+            (item.href === "/dashboard" && pathname === "/dashboard") ||
+            (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}

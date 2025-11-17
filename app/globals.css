@@ -94,3 +94,115 @@ select option {
 select {
   color-scheme: dark;
 }
+
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+}
+
+input[type="range"].slider::-webkit-slider-track {
+  height: 2px;
+  border-radius: 9999px;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ffffff;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #3b82f6;
+  margin-top: -3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"].slider::-moz-range-track {
+  height: 2px;
+  border-radius: 9999px;
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  background: #ffffff;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-sonner-toast],
+[data-sonner-toaster] [data-sonner-toast] {
+  background: #3b82f6 !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+  color: white !important;
+  min-width: 400px !important;
+  max-width: 500px !important;
+}
+
+.toast-success,
+[data-sonner-toast][data-type="success"] {
+  background: #3b82f6 !important;
+}
+
+.toast-error,
+[data-sonner-toast][data-type="error"] {
+  background: #ef4444 !important;
+}
+
+.toast-info,
+[data-sonner-toast][data-type="info"] {
+  background: #3b82f6 !important;
+}
+
+[data-sonner-toast] [data-icon] {
+  background: white !important;
+  border-radius: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 12px !important;
+}
+
+[data-sonner-toast] [data-icon] svg {
+  color: #3b82f6 !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] svg {
+  color: #ef4444 !important;
+}
+
+[data-sonner-toast] [data-title] {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  margin-bottom: 4px !important;
+}
+
+[data-sonner-toast] [data-description] {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+[data-sonner-toast] button[aria-label="Close"] {
+  color: white !important;
+  opacity: 0.8 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+[data-sonner-toast] button[aria-label="Close"]:hover {
+  opacity: 1 !important;
+}

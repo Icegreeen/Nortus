@@ -37,6 +37,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <div className="min-h-screen bg-[#0B1125] flex">
         <Sidebar />
         <div className="flex-1 ml-20 transition-all duration-300 flex flex-col relative z-10">
+          <Header />
           <main className="flex-1 overflow-auto relative z-10">
             {children}
           </main>
